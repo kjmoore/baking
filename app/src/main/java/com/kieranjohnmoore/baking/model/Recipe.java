@@ -1,16 +1,17 @@
 package com.kieranjohnmoore.baking.model;
 
+import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
 
 public class Recipe {
-    public int id;
-    public String name;
-    public List<Ingredient> ingredients;
-    public List<RecipeStep> steps;
-    public int servings;
-    public String image;
+    public int id = 0;
+    public String name = "";
+    public List<Ingredient> ingredients = Collections.emptyList();
+    public List<RecipeStep> steps = Collections.emptyList();
+    public double servings = 0;
+    public String image = "";
 
     @Override
     @NonNull

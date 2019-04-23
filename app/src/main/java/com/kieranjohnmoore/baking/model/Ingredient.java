@@ -3,9 +3,9 @@ package com.kieranjohnmoore.baking.model;
 import androidx.annotation.NonNull;
 
 class Ingredient {
-    public double quantity;
-    public String measure;
-    public String ingredient;
+    public double quantity = 0;
+    public String measure = "";
+    public String ingredient = "";
 
     @Override
     @NonNull

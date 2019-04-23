@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Baking</string>
+
+    <string name="failed_to_load">Failed to load recipes from server</string>
+    <string name="recipe_image">Image of Baked Item</string>
+    <string name="serves">Serves: </string>
 </resources>

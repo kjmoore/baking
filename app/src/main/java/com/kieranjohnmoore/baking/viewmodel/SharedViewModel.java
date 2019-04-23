@@ -1,9 +1,9 @@
-package com.kieranjohnmoore.baking;
+package com.kieranjohnmoore.baking.viewmodel;
 
 import android.app.Application;
 import android.util.Log;
 
-import com.kieranjohnmoore.baking.data.ReceiptRetriever;
+import com.kieranjohnmoore.baking.data.RecipeReceiver;
 import com.kieranjohnmoore.baking.model.Recipe;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class SharedViewModel extends AndroidViewModel {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        final ReceiptRetriever service = retrofit.create(ReceiptRetriever.class);
+        final RecipeReceiver service = retrofit.create(RecipeReceiver.class);
         final Call<List<Recipe>> request = service.getRecipes();
         request.enqueue(new Callback<List<Recipe>>() {
             @Override
