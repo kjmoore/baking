@@ -24,6 +24,7 @@ public class SharedViewModel extends AndroidViewModel {
     public SharedViewModel(@NonNull Application application) {
         super(application);
         refreshServerData();
+        Log.e(TAG, "NEW VIEW MODEL");
     }
 
     public MutableLiveData<List<Recipe>> getRecipes() {

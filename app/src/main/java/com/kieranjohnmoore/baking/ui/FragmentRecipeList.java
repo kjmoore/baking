@@ -13,6 +13,7 @@ import com.kieranjohnmoore.baking.model.Recipe;
 import com.kieranjohnmoore.baking.viewmodel.SharedViewModel;
 
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -20,13 +21,14 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-public class RecipeListFragment extends Fragment {
-    private static final String TAG = RecipeListFragment.class.getSimpleName();
+public class FragmentRecipeList extends Fragment {
+    private static final String TAG = FragmentRecipeList.class.getSimpleName();
 
-    private FragmentRecipeListBinding viewBinding;
     private RecipeListRecyclerView recipeListRecyclerView = new RecipeListRecyclerView();
 
-    public RecipeListFragment() {
+    private FragmentRecipeListBinding viewBinding;
+
+    public FragmentRecipeList() {
         // Required empty public constructor
     }
 
@@ -37,11 +39,14 @@ public class RecipeListFragment extends Fragment {
         viewBinding = DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_list, container, false);
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
-        viewBinding.recipesView.setLayoutManager(layoutManager);
-        viewBinding.recipesView.setAdapter(recipeListRecyclerView);
+        viewBinding.recipeList.setLayoutManager(layoutManager);
+        viewBinding.recipeList.setAdapter(recipeListRecyclerView);
 
-        final SharedViewModel viewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
-        viewModel.getRecipes().observe(this, this::onRecipesDownloaded);
+        final SharedViewModel viewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedViewModel.class);
+                viewModel.getRecipes().observe(this, this::onRecipesDownloaded);
+
+        int recipeNumber = 1;
+        Log.d(TAG, "Loading recipe: " + recipeNumber);
 
         return viewBinding.getRoot();
     }
@@ -51,4 +56,5 @@ public class RecipeListFragment extends Fragment {
         recipeListRecyclerView.updateRecipes(recipes);
         viewBinding.noData.setVisibility(View.GONE);
     }
+    //TODO: Loading spinner
 }
