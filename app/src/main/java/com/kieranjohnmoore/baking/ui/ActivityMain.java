@@ -1,30 +1,31 @@
 package com.kieranjohnmoore.baking.ui;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 
 import com.kieranjohnmoore.baking.R;
-import com.kieranjohnmoore.baking.viewmodel.SharedViewModel;
+import com.kieranjohnmoore.baking.databinding.ActivityMainBinding;
+import com.kieranjohnmoore.baking.model.Recipe;
+import com.kieranjohnmoore.baking.viewmodel.MainViewModel;
+
+import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import androidx.recyclerview.widget.GridLayoutManager;
 
 public class ActivityMain extends AppCompatActivity {
     private static final String TAG = ActivityMain.class.getSimpleName();
-    public static final String VIEW_RECIPE = "VIEW_RECIPE";
-    public static final String VIEW_STEP = "VIEW_STEP";
-    public static final String DATA_RECIPE_ID = "DATA_RECIPE_ID";
-    public static final String DATA_RECIPE_STEP = "DATA_RECIPE_STEP";
 
-    private final FragmentRecipeList recipeList = new FragmentRecipeList();
-    private final FragmentRecipeStepList recipeSteps = new FragmentRecipeStepList();
-    private final FragmentRecipeStep recipeStep = new FragmentRecipeStep();
+    public static final String DATA_RECIPE = "DATA_RECIPE";
+
+    private static final int COLUMN_WIDTH_DP = 400;
+
+    private RecipeListRecyclerView recipeListRecyclerView = new RecipeListRecyclerView();
+    private ActivityMainBinding viewBinding;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -32,52 +33,31 @@ public class ActivityMain extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Log.d(TAG, "Starting app");
-        ViewModelProviders.of(this).get(SharedViewModel.class);
+        viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        // Add the fragment to its container using a transaction
-        fragmentManager.beginTransaction()
-                .add(R.id.main_container, recipeList)
-                .commit();
+        final GridLayoutManager layoutManager = new GridLayoutManager(this, getSpanCount());
+        viewBinding.recipeList.setLayoutManager(layoutManager);
+        viewBinding.recipeList.setAdapter(recipeListRecyclerView);
 
-        final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
-        broadcastManager.registerReceiver(viewRecipe, new IntentFilter(VIEW_RECIPE));
-        broadcastManager.registerReceiver(viewStep, new IntentFilter(VIEW_STEP));
+        final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        viewModel.getRecipes().observe(this, this::onRecipesDownloaded);
     }
 
-    private BroadcastReceiver viewStep = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "Navigating to step");
+    private void onRecipesDownloaded(List<Recipe> recipes) {
+        Log.v(TAG, "Downloaded data: " + recipes);
+        recipeListRecyclerView.updateRecipes(recipes);
+        viewBinding.noData.setVisibility(View.GONE);
+    }
+    //TODO: Loading spinner
 
-            Bundle bundle = intent.getExtras();
-            Log.d(TAG, "Navigation bundle: " + bundle);
+    private int getSpanCount() {
+        final DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
+        final float screenWidthDp = displayMetrics.widthPixels / displayMetrics.density;
 
-            recipeStep.setArguments(bundle);
+        float total = screenWidthDp / COLUMN_WIDTH_DP;
+        return Math.round(total);
+    }
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_container, recipeStep)
-                    .addToBackStack(null)
-                    .commit();
-        }
-    };
-
-    private BroadcastReceiver viewRecipe = new BroadcastReceiver() {
-        public void onReceive(Context context, Intent intent) {
-            Log.e(TAG, "Navigating to Recipe");
-
-            Bundle bundle = intent.getExtras();
-            Log.d(TAG, "Navigation bundle: " + bundle);
-
-            recipeSteps.setArguments(bundle);
-
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_container, recipeSteps)
-                    .addToBackStack(null)
-                    .commit();
-        }
-    };
 }
 
 

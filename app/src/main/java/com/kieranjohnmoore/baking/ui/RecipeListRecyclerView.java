@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 import androidx.annotation.NonNull;
-import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 class RecipeListRecyclerView extends RecyclerView.Adapter<RecipeListRecyclerView.RecipeViewHolder> {
@@ -67,9 +66,10 @@ class RecipeListRecyclerView extends RecyclerView.Adapter<RecipeListRecyclerView
         @Override
         public void onClick(View v) {
             Log.d(TAG, "Clicked: " + recipes.get(getAdapterPosition()).name);
-            final Intent intent = new Intent(ActivityMain.VIEW_RECIPE);
-            intent.putExtra(ActivityMain.DATA_RECIPE_ID, dataLocation);
-            LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(intent);
+
+            final Intent intent = new Intent(v.getContext(), ActivityRecipe.class);
+            intent.putExtra(ActivityMain.DATA_RECIPE, recipe);
+            v.getContext().startActivity(intent);
         }
     }
 }

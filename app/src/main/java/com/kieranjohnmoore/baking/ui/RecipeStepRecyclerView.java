@@ -1,7 +1,6 @@
 package com.kieranjohnmoore.baking.ui;
 
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -70,9 +69,8 @@ class RecipeStepRecyclerView extends RecyclerView.Adapter<RecipeStepRecyclerView
             final int step = getAdapterPosition();
             Log.d(TAG, "Clicked: " + steps.get(step).description);
 
-            final Intent intent = new Intent(ActivityMain.VIEW_STEP);
-            intent.putExtra(ActivityMain.DATA_RECIPE_ID, dataLocation);
-            intent.putExtra(ActivityMain.DATA_RECIPE_STEP, step);
+            final Intent intent = new Intent(ActivityRecipe.VIEW_STEP);
+            intent.putExtra(ActivityRecipe.DATA_RECIPE_STEP, step);
             LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(intent);
         }
     }

@@ -8,12 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.kieranjohnmoore.baking.R;
-import com.kieranjohnmoore.baking.databinding.FragmentRecipeStepsBinding;
-import com.kieranjohnmoore.baking.model.Recipe;
-import com.kieranjohnmoore.baking.model.RecipeStep;
+import com.kieranjohnmoore.baking.databinding.FragmentRecipeBinding;
 import com.kieranjohnmoore.baking.viewmodel.SharedViewModel;
 
-import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -26,6 +23,7 @@ public class FragmentRecipeStepList extends Fragment {
     private static final String TAG = FragmentRecipeStepList.class.getSimpleName();
 
     private final RecipeStepRecyclerView recipeStepRecyclerView = new RecipeStepRecyclerView();
+    private SharedViewModel viewModel;
 
     public FragmentRecipeStepList() {
         // Required empty public constructor
@@ -35,28 +33,15 @@ public class FragmentRecipeStepList extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        final FragmentRecipeStepsBinding viewBinding =
-                DataBindingUtil.inflate(inflater, R.layout.fragment_recipe_steps, container, false);
+        final FragmentRecipeBinding viewBinding =
+                DataBindingUtil.inflate(inflater, R.layout.fragment_recipe, container, false);
 
-        final Bundle bundle = this.getArguments();
-
-
-        if (bundle == null || !bundle.containsKey(ActivityMain.DATA_RECIPE_ID)) {
-            Log.e(TAG, "Could not detect recipe to load");
-            return viewBinding.getRoot();
-        }
-
-        int recipeNumber = bundle.getInt(ActivityMain.DATA_RECIPE_ID);
-        Log.d(TAG, "Loading recipe: " + recipeNumber);
-
-        final SharedViewModel viewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedViewModel.class);
-        List<Recipe> recipes = viewModel.getRecipes().getValue();
-        if (recipes != null && recipes.size() > recipeNumber) {
-            final Recipe recipe = recipes.get(recipeNumber);
-            Log.e(TAG, "Selecting recipe: " + recipe);
-            final List<RecipeStep> steps = recipe.steps;
-            recipeStepRecyclerView.setSteps(steps);
-        }
+        viewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedViewModel.class);
+        viewModel.getRecipe().observe(this, (recipe) -> {
+            Log.d(TAG, "Viewing recipe: " + recipe);
+            viewBinding.setRecipe(recipe);
+            recipeStepRecyclerView.setSteps(recipe.steps);
+        });
 
         final GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 1);
         viewBinding.recipeList.setLayoutManager(layoutManager);
@@ -65,5 +50,12 @@ public class FragmentRecipeStepList extends Fragment {
         viewBinding.noData.setVisibility(View.GONE);
 
         return viewBinding.getRoot();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        viewModel.getRecipe().removeObservers(this);
     }
 }

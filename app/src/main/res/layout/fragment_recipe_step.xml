@@ -12,18 +12,12 @@
         android:layout_height="match_parent"
         tools:context=".ui.FragmentRecipeStepList">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recipe_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/no_data"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="@string/failed_to_load" />
+            android:text="@{step.description}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
