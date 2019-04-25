@@ -16,6 +16,7 @@ import com.kieranjohnmoore.baking.viewmodel.SharedViewModel;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -28,6 +29,7 @@ public class ActivityRecipe extends AppCompatActivity {
     private final FragmentRecipeStep recipeStep = new FragmentRecipeStep();
     private SharedViewModel sharedViewModel;
     private Recipe recipe;
+    private boolean isTabletMode = false;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,7 +52,9 @@ public class ActivityRecipe extends AppCompatActivity {
 
         final ActivityRecipeBinding viewDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_recipe);
 
-        if (viewDataBinding.sideBar != null) {
+        isTabletMode = (viewDataBinding.sideBar != null);
+
+        if (isTabletMode) {
             Log.e(TAG, "Using tablet view");
             fragmentManager.beginTransaction()
                     .add(R.id.side_bar, recipeSteps)
@@ -60,6 +64,7 @@ public class ActivityRecipe extends AppCompatActivity {
             fragmentManager.beginTransaction()
                     .add(R.id.main_container, recipeSteps)
                     .commit();
+            setTitle(recipe.name);
         }
 
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
@@ -83,11 +88,15 @@ public class ActivityRecipe extends AppCompatActivity {
                 sharedViewModel.setStep(recipe.steps.get(stepId));
             }
 
-            FragmentManager fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction()
-                    .replace(R.id.main_container, recipeStep)
-                    .addToBackStack(null)
-                    .commit();
+            final FragmentManager fragmentManager = getSupportFragmentManager();
+            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            fragmentTransaction.replace(R.id.main_container, recipeStep);
+
+            if (!isTabletMode) {
+                fragmentTransaction.addToBackStack(null);
+            }
+            fragmentTransaction.commit();
         }
     };
 
