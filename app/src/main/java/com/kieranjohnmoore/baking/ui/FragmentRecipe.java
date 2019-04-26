@@ -1,6 +1,7 @@
 package com.kieranjohnmoore.baking.ui;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,15 +18,16 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.GridLayoutManager;
 
-public class FragmentRecipeStepList extends Fragment {
-    private static final String TAG = FragmentRecipeStepList.class.getSimpleName();
+public class FragmentRecipe extends Fragment {
+    private static final String TAG = FragmentRecipe.class.getSimpleName();
 
     private final RecipeStepRecyclerView recipeStepRecyclerView = new RecipeStepRecyclerView();
     private SharedViewModel viewModel;
 
-    public FragmentRecipeStepList() {
+    public FragmentRecipe() {
         // Required empty public constructor
     }
 
@@ -48,6 +50,13 @@ public class FragmentRecipeStepList extends Fragment {
         viewBinding.recipeList.setAdapter(recipeStepRecyclerView);
 
         viewBinding.noData.setVisibility(View.GONE);
+
+        viewBinding.ingredients.setOnClickListener((v) -> {
+            Log.d(TAG, "Clicked ingredients");
+
+            final Intent intent = new Intent(ActivityRecipe.VIEW_INGREDIENTS);
+            LocalBroadcastManager.getInstance(v.getContext()).sendBroadcast(intent);
+        });
 
         return viewBinding.getRoot();
     }

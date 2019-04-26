@@ -5,4 +5,9 @@
     <string name="recipe_image">Image of Baked Item</string>
     <string name="serves">Serves: </string>
     <string name="detail_error_message">Could not load recipe</string>
+    <string name="add_widget">Add widget</string>
+    <string name="list_of_ingredients">List of ingredients</string>
+    <string name="ingredients">Ingredients</string>
+    <string name="saving_to_widget">Saving the current ingredients list to your homescreen widget</string>
+    <string name="widget_help">Open the Baking app and select and ingredients list to show here</string>
 </resources>

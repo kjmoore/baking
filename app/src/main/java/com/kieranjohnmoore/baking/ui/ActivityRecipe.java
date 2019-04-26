@@ -15,6 +15,7 @@ import com.kieranjohnmoore.baking.viewmodel.SharedViewModel;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProviders;
@@ -23,9 +24,11 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 public class ActivityRecipe extends AppCompatActivity {
     private static final String TAG = ActivityRecipe.class.getSimpleName();
     public static final String VIEW_STEP = "VIEW_STEP";
+    public static final String VIEW_INGREDIENTS = "VIEW_INGREDIENTS";
     public static final String DATA_RECIPE_STEP = "DATA_RECIPE_STEP";
 
-    private final FragmentRecipeStepList recipeSteps = new FragmentRecipeStepList();
+    private final FragmentRecipe recipeSteps = new FragmentRecipe();
+    private final FragmentIngredientsList ingredientsList = new FragmentIngredientsList();
     private final FragmentRecipeStep recipeStep = new FragmentRecipeStep();
     private SharedViewModel sharedViewModel;
     private Recipe recipe;
@@ -69,6 +72,7 @@ public class ActivityRecipe extends AppCompatActivity {
 
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
         broadcastManager.registerReceiver(viewStep, new IntentFilter(VIEW_STEP));
+        broadcastManager.registerReceiver(viewIngredients, new IntentFilter(VIEW_INGREDIENTS));
     }
 
     private void closeOnError() {
@@ -88,17 +92,28 @@ public class ActivityRecipe extends AppCompatActivity {
                 sharedViewModel.setStep(recipe.steps.get(stepId));
             }
 
-            final FragmentManager fragmentManager = getSupportFragmentManager();
-            final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            fragmentTransaction.replace(R.id.main_container, recipeStep);
-
-            if (!isTabletMode) {
-                fragmentTransaction.addToBackStack(null);
-            }
-            fragmentTransaction.commit();
+            setFragment(recipeStep);
         }
     };
+
+    private BroadcastReceiver viewIngredients = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            Log.d(TAG, "Navigating to ingredients");
+            setFragment(ingredientsList);
+        }
+    };
+
+    private void setFragment(Fragment fragment) {
+        final FragmentManager fragmentManager = getSupportFragmentManager();
+        final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        fragmentTransaction.replace(R.id.main_container, fragment);
+
+        if (!isTabletMode) {
+            fragmentTransaction.addToBackStack(null);
+        }
+        fragmentTransaction.commit();
+    }
 
     @Override
     protected void onDestroy() {
@@ -106,6 +121,7 @@ public class ActivityRecipe extends AppCompatActivity {
 
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);
         broadcastManager.unregisterReceiver(viewStep);
+        broadcastManager.unregisterReceiver(viewIngredients);
     }
 }
 

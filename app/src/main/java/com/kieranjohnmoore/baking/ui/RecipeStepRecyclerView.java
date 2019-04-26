@@ -33,7 +33,7 @@ class RecipeStepRecyclerView extends RecyclerView.Adapter<RecipeStepRecyclerView
     @Override
     public void onBindViewHolder(@NonNull RecipeViewHolder recipeViewHolder, int i) {
         final RecipeStep recipe = steps.get(i);
-        recipeViewHolder.bind(recipe, i);
+        recipeViewHolder.bind(recipe);
     }
 
     @Override
@@ -44,12 +44,11 @@ class RecipeStepRecyclerView extends RecyclerView.Adapter<RecipeStepRecyclerView
     void setSteps(List<RecipeStep> steps) {
         Log.d(TAG, "Updating steps");
         this.steps = steps;
+        notifyDataSetChanged();
     }
 
     class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ItemStepBinding binding;
-        RecipeStep recipe;
-        int dataLocation;
 
         RecipeViewHolder(ItemStepBinding binding) {
             super(binding.getRoot());
@@ -57,9 +56,7 @@ class RecipeStepRecyclerView extends RecyclerView.Adapter<RecipeStepRecyclerView
             binding.getRoot().setOnClickListener(this);
         }
 
-        private void bind(@NonNull final RecipeStep recipe, int dataLocation) {
-            this.recipe = recipe;
-            this.dataLocation = dataLocation;
+        private void bind(@NonNull final RecipeStep recipe) {
             binding.setRecipe(recipe);
             binding.executePendingBindings();
         }

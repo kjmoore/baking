@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
 
-class Ingredient implements Parcelable {
+public class Ingredient implements Parcelable {
     public double quantity = 0;
     public String measure = "";
     public String ingredient = "";
