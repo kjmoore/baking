@@ -5,12 +5,19 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.security.ProviderInstaller;
 import com.kieranjohnmoore.baking.R;
 import com.kieranjohnmoore.baking.databinding.ActivityMainBinding;
 import com.kieranjohnmoore.baking.model.Recipe;
 import com.kieranjohnmoore.baking.viewmodel.MainViewModel;
 
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
+
+import javax.net.ssl.SSLContext;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -40,6 +47,18 @@ public class ActivityMain extends AppCompatActivity {
 
         final MainViewModel viewModel = ViewModelProviders.of(this).get(MainViewModel.class);
         viewModel.getRecipes().observe(this, this::onRecipesDownloaded);
+
+        //Install TLSv1.2 for old android devices
+        try {
+            ProviderInstaller.installIfNeeded(getApplicationContext());
+            SSLContext sslContext;
+            sslContext = SSLContext.getInstance("TLSv1.2");
+            sslContext.init(null, null, null);
+            sslContext.createSSLEngine();
+        } catch (GooglePlayServicesRepairableException | GooglePlayServicesNotAvailableException
+                | NoSuchAlgorithmException | KeyManagementException e) {
+            Log.e(TAG, "Could not install TLSv1.2, data will not download");
+        }
     }
 
     private void onRecipesDownloaded(List<Recipe> recipes) {
