@@ -55,7 +55,7 @@ public class ActivityRecipe extends AppCompatActivity {
 
         final ActivityRecipeBinding viewDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_recipe);
 
-        isTabletMode = (viewDataBinding.sideBar != null);
+        isTabletMode = this.getResources().getBoolean(R.bool.tablet_mode);
 
         if (isTabletMode) {
             Log.e(TAG, "Using tablet view");

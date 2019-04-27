@@ -3,13 +3,10 @@ package com.kieranjohnmoore.baking;
 import android.content.Intent;
 
 import com.google.gson.Gson;
-import com.jakewharton.espresso.OkHttp3IdlingResource;
-import com.kieranjohnmoore.baking.data.RetrofitBuilder;
 import com.kieranjohnmoore.baking.model.Recipe;
 import com.kieranjohnmoore.baking.ui.ActivityMain;
 import com.kieranjohnmoore.baking.ui.ActivityRecipe;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,7 +19,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.stream.Collectors;
 
-import androidx.test.espresso.IdlingRegistry;
+import androidx.test.espresso.NoActivityResumedException;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
@@ -33,10 +30,11 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static junit.framework.TestCase.fail;
 import static org.hamcrest.core.StringContains.containsString;
 
 @RunWith(AndroidJUnit4.class)
-public class ShowRecipeBasicTest {
+public class ShowRecipeBasicTest extends BaseInstrumentedTest {
     @Rule
     public ActivityTestRule<ActivityRecipe> testRule = new ActivityTestRule<>(ActivityRecipe.class, false, false);
 
@@ -78,10 +76,24 @@ public class ShowRecipeBasicTest {
     }
 
     @Test
+    @TestAnnotations.PhoneTest
     public void ensureBackButtonReturnsFromIngredientsList() {
         onView(withId(R.id.ingredients)).perform(click());
         onView(withText(containsString("Graham Cracker crumbs"))).check(matches(isDisplayed()));
         pressBack();
-        onView(withText(containsString("Ingredients"))).check(matches(isDisplayed()));
+        ensureStepsAreShown();
+    }
+
+    @Test
+    @TestAnnotations.TabletTest
+    public void ensureBackButtonReturnsToMainViewOnTablet() {
+        onView(withId(R.id.ingredients)).perform(click());
+        onView(withText(containsString("Graham Cracker crumbs"))).check(matches(isDisplayed()));
+        try {
+            pressBack();
+            fail("Should have thrown NoActivityResumedException");
+        } catch (NoActivityResumedException expected) {
+            //The activity should exit to return to the main view
+        }
     }
 }
