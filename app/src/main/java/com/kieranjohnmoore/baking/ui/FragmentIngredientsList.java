@@ -11,10 +11,12 @@ import android.widget.Toast;
 
 import com.kieranjohnmoore.baking.R;
 import com.kieranjohnmoore.baking.databinding.FragmentIngredientsListBinding;
+import com.kieranjohnmoore.baking.model.Ingredient;
 import com.kieranjohnmoore.baking.model.Recipe;
 import com.kieranjohnmoore.baking.viewmodel.SharedViewModel;
 import com.kieranjohnmoore.baking.widget.IngredientsListWidget;
 
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -69,11 +71,20 @@ public class FragmentIngredientsList extends Fragment {
                 Toast.makeText(getContext(), R.string.saving_to_widget, Toast.LENGTH_SHORT).show();
 
                 IngredientsListWidget.updateAppWidget(Objects.requireNonNull(getContext()),
-                        appWidgetManager, appWidgetIds, "Some data " + recipe);
+                        appWidgetManager, appWidgetIds, generateShopingList(recipe.ingredients));
             });
         } else {
             viewBinding.saveToWidget.hide();
         }
+    }
+
+    private String generateShopingList(List<Ingredient> ingredients) {
+        StringBuilder builder = new StringBuilder();
+        for (Ingredient ingredient : ingredients) {
+            builder.append(ingredient.ingredient);
+            builder.append("\n");
+        }
+        return builder.toString().trim();
     }
 
     @Override
