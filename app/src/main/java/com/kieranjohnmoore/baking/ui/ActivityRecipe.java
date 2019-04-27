@@ -9,7 +9,6 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.kieranjohnmoore.baking.R;
-import com.kieranjohnmoore.baking.databinding.ActivityRecipeBinding;
 import com.kieranjohnmoore.baking.model.Recipe;
 import com.kieranjohnmoore.baking.viewmodel.SharedViewModel;
 
@@ -56,12 +55,12 @@ public class ActivityRecipe extends AppCompatActivity {
         if (savedInstanceState == null) {
             final FragmentManager fragmentManager = getSupportFragmentManager();
             if (isTabletMode) {
-                Log.e(TAG, "Using tablet view");
+                Log.d(TAG, "Using tablet view");
                 fragmentManager.beginTransaction()
                         .add(R.id.side_bar, recipeSteps)
                         .commit();
             } else {
-                Log.e(TAG, "Using phone view");
+                Log.d(TAG, "Using phone view");
                 fragmentManager.beginTransaction()
                         .add(R.id.main_container, recipeSteps)
                         .commit();
@@ -104,6 +103,11 @@ public class ActivityRecipe extends AppCompatActivity {
 
     private void setFragment(Fragment fragment) {
         final FragmentManager fragmentManager = getSupportFragmentManager();
+
+        if (fragmentManager.findFragmentById(R.id.main_container) == fragment) {
+            return;
+        }
+
         final FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
         fragmentTransaction.replace(R.id.main_container, fragment);

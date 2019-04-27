@@ -29,8 +29,11 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.kieranjohnmoore.baking.R;
 import com.kieranjohnmoore.baking.databinding.FragmentRecipeStepBinding;
+import com.kieranjohnmoore.baking.model.Recipe;
+import com.kieranjohnmoore.baking.model.RecipeStep;
 import com.kieranjohnmoore.baking.viewmodel.SharedViewModel;
 
+import java.util.List;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -70,19 +73,35 @@ public class FragmentRecipeStep extends Fragment implements ExoPlayer.EventListe
             } else {
                 viewBinding.playerView.setVisibility(View.GONE);
             }
+
+            if (viewBinding.buttonBack != null) {
+                if (step.id == 0) {
+                    viewBinding.buttonBack.setEnabled(false);
+                } else {
+                    viewBinding.buttonBack.setEnabled(true);
+                }
+
+                viewBinding.buttonBack.setOnClickListener((view) -> {
+                    navigate(view, step.id - 1);
+                });
+            }
+
+            if (viewBinding.buttonForward != null) {
+                final Recipe recipes = viewModel.getRecipe().getValue();
+                if (recipes != null) {
+                    if (step.id < (recipes.steps.size() - 1)) {
+                        viewBinding.buttonForward.setEnabled(true);
+                    } else {
+                        viewBinding.buttonForward.setEnabled(false);
+                    }
+
+                    viewBinding.buttonForward.setOnClickListener((view) -> {
+                        navigate(view, step.id + 1);
+                    });
+                }
+            }
+
         });
-
-        if(viewBinding.buttonBack != null) {
-            viewBinding.buttonBack.setOnClickListener((view) -> {
-
-            });
-        }
-
-        if(viewBinding.buttonForward != null) {
-            viewBinding.buttonForward.setOnClickListener((view) -> {
-
-            });
-        }
 
         return viewBinding.getRoot();
     }
