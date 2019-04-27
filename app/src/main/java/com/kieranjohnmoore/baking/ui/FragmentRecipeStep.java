@@ -63,6 +63,8 @@ public class FragmentRecipeStep extends Fragment implements ExoPlayer.EventListe
 
         viewModel = ViewModelProviders.of(Objects.requireNonNull(getActivity())).get(SharedViewModel.class);
         viewModel.getStep().observe(this, (step) -> {
+            cleanUpMediaPlayer();
+
             Log.d(TAG, "Setting step: " + step);
             viewBinding.setStep(step);
             if (step.videoURL != null && !step.videoURL.isEmpty()) {
@@ -70,6 +72,7 @@ public class FragmentRecipeStep extends Fragment implements ExoPlayer.EventListe
                 Log.d(TAG, "Playing video: " + videoUri);
                 initializePlayer(videoUri);
                 initializeMediaSession();
+                viewBinding.playerView.setVisibility(View.VISIBLE);
             } else {
                 viewBinding.playerView.setVisibility(View.GONE);
             }
@@ -113,22 +116,20 @@ public class FragmentRecipeStep extends Fragment implements ExoPlayer.EventListe
     }
 
     private void initializePlayer(Uri mediaUri) {
-        if (mediaPlayer == null) {
-            // Create an instance of the ExoPlayer.
-            TrackSelector trackSelector = new DefaultTrackSelector();
-            LoadControl loadControl = new DefaultLoadControl();
-            mediaPlayer = ExoPlayerFactory.newSimpleInstance(this.getContext(), trackSelector, loadControl);
-            viewBinding.playerView.setPlayer(mediaPlayer);
-            // Prepare the MediaSource.
-            String userAgent = Util.getUserAgent(this.getContext(), "Baking");
-            MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
-                    Objects.requireNonNull(this.getContext()), userAgent),
-                    new DefaultExtractorsFactory(), null, null);
-            mediaPlayer.prepare(mediaSource);
-            mediaPlayer.setPlayWhenReady(false);
+        // Create an instance of the ExoPlayer.
+        TrackSelector trackSelector = new DefaultTrackSelector();
+        LoadControl loadControl = new DefaultLoadControl();
+        mediaPlayer = ExoPlayerFactory.newSimpleInstance(this.getContext(), trackSelector, loadControl);
+        viewBinding.playerView.setPlayer(mediaPlayer);
+        // Prepare the MediaSource.
+        String userAgent = Util.getUserAgent(this.getContext(), "Baking");
+        MediaSource mediaSource = new ExtractorMediaSource(mediaUri, new DefaultDataSourceFactory(
+                Objects.requireNonNull(this.getContext()), userAgent),
+                new DefaultExtractorsFactory(), null, null);
+        mediaPlayer.prepare(mediaSource);
+        mediaPlayer.setPlayWhenReady(false);
 
-            mediaPlayer.addListener(this);
-        }
+        mediaPlayer.addListener(this);
     }
 
     private void initializeMediaSession() {
@@ -193,10 +194,8 @@ public class FragmentRecipeStep extends Fragment implements ExoPlayer.EventListe
         }
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-
+    private void cleanUpMediaPlayer() {
+        Log.e(TAG, "cleaningup");
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
@@ -206,7 +205,12 @@ public class FragmentRecipeStep extends Fragment implements ExoPlayer.EventListe
         if (mediaSession != null) {
             mediaSession.setActive(false);
         }
+    }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        cleanUpMediaPlayer();
         viewModel.getStep().removeObservers(this);
     }
 }
