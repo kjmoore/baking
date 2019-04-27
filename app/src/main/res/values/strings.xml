@@ -10,4 +10,7 @@
     <string name="ingredients">Ingredients</string>
     <string name="saving_to_widget">Saving the current ingredients list to your homescreen widget</string>
     <string name="widget_help">Open the Baking app and select and ingredients list to show here</string>
+    <string name="quantity">Quantity:</string>
+    <string name="next_step">Next Step</string>
+    <string name="last_step">Last Step</string>
 </resources>

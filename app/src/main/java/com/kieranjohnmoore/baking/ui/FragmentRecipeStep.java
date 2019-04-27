@@ -1,6 +1,7 @@
 package com.kieranjohnmoore.baking.ui;
 
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.media.session.MediaSessionCompat;
@@ -36,6 +37,7 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 public class FragmentRecipeStep extends Fragment implements ExoPlayer.EventListener {
     private static final String TAG = FragmentRecipeStep.class.getSimpleName();
@@ -70,7 +72,25 @@ public class FragmentRecipeStep extends Fragment implements ExoPlayer.EventListe
             }
         });
 
+        if(viewBinding.buttonBack != null) {
+            viewBinding.buttonBack.setOnClickListener((view) -> {
+
+            });
+        }
+
+        if(viewBinding.buttonForward != null) {
+            viewBinding.buttonForward.setOnClickListener((view) -> {
+
+            });
+        }
+
         return viewBinding.getRoot();
+    }
+
+    private void navigate(View view, int step) {
+        final Intent intent = new Intent(ActivityRecipe.VIEW_STEP);
+        intent.putExtra(ActivityRecipe.DATA_RECIPE_STEP, step);
+        LocalBroadcastManager.getInstance(view.getContext()).sendBroadcast(intent);
     }
 
     private void initializePlayer(Uri mediaUri) {
