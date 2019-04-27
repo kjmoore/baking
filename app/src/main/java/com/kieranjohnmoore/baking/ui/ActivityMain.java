@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.kieranjohnmoore.baking.R;
+import com.kieranjohnmoore.baking.data.RetrofitBuilder;
 import com.kieranjohnmoore.baking.databinding.ActivityMainBinding;
 import com.kieranjohnmoore.baking.model.Recipe;
 import com.kieranjohnmoore.baking.viewmodel.MainViewModel;
@@ -16,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.GridLayoutManager;
+import retrofit2.Retrofit;
 
 public class ActivityMain extends AppCompatActivity {
     private static final String TAG = ActivityMain.class.getSimpleName();
@@ -57,7 +59,6 @@ public class ActivityMain extends AppCompatActivity {
         float total = screenWidthDp / COLUMN_WIDTH_DP;
         return Math.round(total);
     }
-
 }
 
 

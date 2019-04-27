@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.kieranjohnmoore.baking.data.RecipeReceiver;
+import com.kieranjohnmoore.baking.data.RetrofitBuilder;
 import com.kieranjohnmoore.baking.model.Recipe;
 
 import java.util.List;
@@ -31,13 +32,8 @@ public class MainViewModel extends AndroidViewModel {
         return recipes;
     }
 
-    public void refreshServerData() {
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://d17h27t6h515a5.cloudfront.net/topher/2017/May/59121517_baking/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        final RecipeReceiver service = retrofit.create(RecipeReceiver.class);
+    private void refreshServerData() {
+        final RecipeReceiver service = RetrofitBuilder.getRetrofit().create(RecipeReceiver.class);
         final Call<List<Recipe>> request = service.getRecipes();
         request.enqueue(new Callback<List<Recipe>>() {
             @Override

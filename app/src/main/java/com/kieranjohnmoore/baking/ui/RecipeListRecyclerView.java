@@ -41,6 +41,9 @@ class RecipeListRecyclerView extends RecyclerView.Adapter<RecipeListRecyclerView
     }
 
     void updateRecipes(List<Recipe> recipes) {
+        if (recipes == null) {
+            return;
+        }
         this.recipes = recipes;
         notifyDataSetChanged();
     }

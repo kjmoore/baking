@@ -64,7 +64,7 @@ class RecipeStepRecyclerView extends RecyclerView.Adapter<RecipeStepRecyclerView
         @Override
         public void onClick(View v) {
             final int step = getAdapterPosition();
-            Log.d(TAG, "Clicked: " + steps.get(step).description);
+            Log.d(TAG, "Clicked: " + steps.get(step).shortDescription);
 
             final Intent intent = new Intent(ActivityRecipe.VIEW_STEP);
             intent.putExtra(ActivityRecipe.DATA_RECIPE_STEP, step);
