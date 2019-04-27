@@ -37,7 +37,7 @@ public class ActivityRecipe extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        DataBindingUtil.setContentView(this, R.layout.activity_recipe);
 
         final Intent intent = getIntent();
         if (intent == null || intent.getParcelableExtra(ActivityMain.DATA_RECIPE) == null) {
@@ -51,23 +51,22 @@ public class ActivityRecipe extends AppCompatActivity {
         sharedViewModel = ViewModelProviders.of(this).get(SharedViewModel.class);
         sharedViewModel.setRecipe(recipe);
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        final ActivityRecipeBinding viewDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_recipe);
-
         isTabletMode = this.getResources().getBoolean(R.bool.tablet_mode);
 
-        if (isTabletMode) {
-            Log.e(TAG, "Using tablet view");
-            fragmentManager.beginTransaction()
-                    .add(R.id.side_bar, recipeSteps)
-                    .commit();
-        } else {
-            Log.e(TAG, "Using phone view");
-            fragmentManager.beginTransaction()
-                    .add(R.id.main_container, recipeSteps)
-                    .commit();
-            setTitle(recipe.name);
+        if (savedInstanceState == null) {
+            final FragmentManager fragmentManager = getSupportFragmentManager();
+            if (isTabletMode) {
+                Log.e(TAG, "Using tablet view");
+                fragmentManager.beginTransaction()
+                        .add(R.id.side_bar, recipeSteps)
+                        .commit();
+            } else {
+                Log.e(TAG, "Using phone view");
+                fragmentManager.beginTransaction()
+                        .add(R.id.main_container, recipeSteps)
+                        .commit();
+                setTitle(recipe.name);
+            }
         }
 
         final LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(this);

@@ -30,10 +30,9 @@ public class ActivityMain extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         Log.d(TAG, "Starting app");
-        viewBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
         final GridLayoutManager layoutManager = new GridLayoutManager(this, getSpanCount());
         viewBinding.recipeList.setLayoutManager(layoutManager);
