@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-public class TestAnnotations {
+class TestAnnotations {
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ElementType.METHOD})
     @interface TabletTest {
